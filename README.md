@@ -57,39 +57,23 @@ Full DDL with column types and constraints is in `restaurant_booking_dump.sql`.
 
 ## Setup & run
 
-### 1. Database
+**Prerequisites:** Node.js, Python 3, PostgreSQL installed and running.
 
-Requires PostgreSQL 15+ running locally on port 5432 with a `postgres` superuser.
+### Step 1: Set up the database
 
-```bash
-# Create the database
-psql -U postgres -c "CREATE DATABASE restaurant_booking;"
+Open pgAdmin, create a database called `restaurant_booking`, open the Query Tool, and run the `restaurant_booking_dump.sql` file to create all tables and insert sample data.
 
-# Load schema + seed data
-psql -U postgres -d restaurant_booking -f restaurant_booking_dump.sql
-```
-
-After loading you should see 10 tables and the seed data:
-
-```bash
-psql -U postgres -d restaurant_booking -c "\dt"
-psql -U postgres -d restaurant_booking -c "SELECT COUNT(*) FROM customer;"   # 10
-psql -U postgres -d restaurant_booking -c "SELECT COUNT(*) FROM restaurant;" # 7
-```
-
-### 2. Backend (FastAPI)
+### Step 2: Start the backend
 
 ```bash
 cd backend
-pip install fastapi uvicorn psycopg2-binary pydantic
-uvicorn main:app --host 0.0.0.0 --port 8000 --reload
+pip install fastapi uvicorn psycopg2-binary
+python main.py
 ```
 
-The API is now reachable at `http://localhost:8000`. Interactive Swagger docs are auto-generated at `http://localhost:8000/docs`.
+The backend will start on `http://localhost:8000`. Make sure to update the PostgreSQL password in `main.py` before running.
 
-> **Note:** the database connection settings (host, user, password, port) are at the top of `backend/main.py` in `get_db()`. Update the `password` field to match your local Postgres password before starting the server.
-
-### 3. Frontend (React)
+### Step 3: Start the frontend
 
 ```bash
 cd frontend
@@ -97,7 +81,7 @@ npm install
 npm start
 ```
 
-Opens `http://localhost:3000`. The frontend talks to the backend at `http://localhost:8000/api` (configured in `src/api.js`).
+The frontend will open automatically at `http://localhost:3000`.
 
 ---
 
@@ -218,20 +202,3 @@ All endpoints are under `/api`. JSON request/response bodies. CORS is open for l
 - **Cascade handling:** because the original DDL did not declare `ON DELETE CASCADE`, the backend manually deletes child rows in the correct order (Payment → Reviews → Reservation → Restaurant_Table → Timeslot → Restaurant) inside delete endpoints.
 - **Auto-vs-manual assignment:** the `Reservation.assignment_method` column defaults to `'auto'`. The customer UI lets the user pick a specific table/slot or leave them blank for auto-assign.
 - **Default port:** backend on `:8000`, frontend on `:3000`. To change the API base URL, edit `frontend/src/api.js`.
-
----
-
-## Team contributions
-
-Listed alphabetically. (Team to update with specific responsibilities before final submission.)
-
-- **Devendra Janyani** —
-- **Kushagra Srivastava** —
-- **Sanyam Jaiswal** —
-- **Yugant Vijay Popkar** —
-
----
-
-## Demo video
-
-YouTube link: *to be added*
